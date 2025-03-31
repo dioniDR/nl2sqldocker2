@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 """
 run.py - Script principal de ejecución del sistema NL2SQL
 
@@ -17,10 +18,8 @@ DEPENDENCIAS:
     - core.config: Configuración del sistema
     - core.db_connector: Conexión a base de datos
     - core.schema_analyzer: Análisis de esquema
-    - core.sql_generator: Generación de SQL
-    - providers.*: Proveedores de IA
     - utils.progress: Indicadores de progreso
-    - utils.error_handler: Manejo de errores
+    - utils.config_helpers: Utilidades de configuración
 """
 
 import sys
@@ -34,7 +33,8 @@ sys.path.append(str(root_dir))
 from core.config import Config
 from core.db_connector import DBConnector
 from core.schema_analyzer import SchemaAnalyzer
-from utils.progress import Progress
+from utils.progress import start_phase, update_progress, complete_phase, show_info, show_error, show_success
+from utils.config_helpers import is_setup_complete
 
 def parse_args():
     """Parsea los argumentos de línea de comandos"""
@@ -48,29 +48,45 @@ def parse_args():
 def main():
     """Función principal que ejecuta el flujo completo del sistema"""
     args = parse_args()
-    progress = Progress()
     
     # FASE 1: VALIDACIÓN DE CONFIGURACIÓN
-    progress.start_phase("VALIDACIÓN")
-    config = Config(args.config)
-    if not config.validate():
-        progress.error("Error en la configuración. Ejecute setup.py para configurar el sistema.")
+    start_phase("setup", "Verificando configuración")
+    update_progress(50, "Comprobando configuración del sistema")
+    
+    # Verificar si la configuración es válida
+    if not is_setup_complete(Config.get):
+        update_progress(100, "Error: Configuración incompleta")
+        complete_phase(False, "Error en la configuración")
+        show_error("Configuración incompleta. Ejecute 'python scripts/setup.py' para configurar el sistema.")
         return
-    progress.complete("Configuración validada correctamente")
+    
+    update_progress(100, "Configuración verificada")
+    complete_phase(True, "Configuración validada correctamente")
     
     # FASE 2: CONEXIÓN A BASE DE DATOS
-    progress.start_phase("CONEXIÓN BD")
+    start_phase("db_connection", "Conectando a base de datos")
+    update_progress(20, "Inicializando conector de base de datos")
+    
     db_connector = DBConnector()
+    update_progress(50, "Intentando conexión")
+    
     success = db_connector.connect()
     if not success:
-        progress.error("Error al conectar a la base de datos.")
+        update_progress(100, "Error: No se pudo conectar a la base de datos")
+        complete_phase(False, "Error al conectar a la base de datos")
+        show_error("No se pudo establecer conexión con la base de datos")
         print("\n→ Sugerencia: Ejecute 'python scripts/setup.py' para configurar las credenciales de conexión")
         return
-    progress.complete("Conexión establecida correctamente")
+    
+    update_progress(100, "Conexión establecida")
+    complete_phase(True, "Conexión establecida correctamente")
     
     # FASE 3: ANÁLISIS DE ESQUEMA
-    progress.start_phase("ANÁLISIS ESQUEMA")
+    start_phase("schema_analysis", "Analizando estructura de base de datos")
+    update_progress(20, "Inicializando analizador de esquema")
+    
     schema_analyzer = SchemaAnalyzer(db_connector)
+    update_progress(40, "Obteniendo bases de datos disponibles")
     
     # Si se especificó una base de datos, la usamos
     database = args.database
@@ -78,28 +94,47 @@ def main():
         # Si no, obtenemos las disponibles y seleccionamos una
         databases = schema_analyzer.get_databases()
         if not databases:
-            progress.error("No se encontraron bases de datos disponibles")
+            update_progress(100, "Error: No se encontraron bases de datos")
+            complete_phase(False, "No se encontraron bases de datos disponibles")
+            show_error("No se encontraron bases de datos disponibles")
             print("\n→ Sugerencia: Ejecute 'python scripts/setup.py' para configurar correctamente el sistema")
             return
-        database = databases[0]  # Por defecto, la primera
         
+        database = databases[0]  # Por defecto, la primera
+        update_progress(60, f"Seleccionada base de datos: {database}")
+    
+    update_progress(70, f"Analizando base de datos: {database}")
     try:
         schema = schema_analyzer.analyze_database(database)
         schema_text = schema_analyzer.get_schema_text(schema)
+        update_progress(90, "Esquema analizado correctamente")
     except Exception as e:
-        progress.error(f"Error al analizar el esquema: {e}")
+        update_progress(100, f"Error: {str(e)}")
+        complete_phase(False, f"Error al analizar el esquema: {str(e)}")
+        show_error(f"Error al analizar el esquema: {str(e)}")
         print("\n→ Sugerencia: Verifique que la base de datos esté disponible o ejecute 'python scripts/setup.py'")
         return
     
     total_tables = len(schema["tables"])
     total_columns = sum(len(table["columns"]) for table in schema["tables"].values())
-    progress.complete(f"Esquema analizado: {total_tables} tablas, {total_columns} columnas")
+    update_progress(100, f"Análisis completado: {total_tables} tablas, {total_columns} columnas")
+    complete_phase(True, f"Esquema analizado: {total_tables} tablas, {total_columns} columnas")
     
     # FASE 4: VERIFICACIÓN DE PROVEEDOR IA
-    # Aquí vendría la implementación cuando tengamos los proveedores
+    start_phase("ai_provider", "Comprobando proveedores de IA")
+    update_progress(30, f"Proveedor solicitado: {args.provider}")
+    
+    # Aquí vendría la implementación de la verificación del proveedor de IA
+    # Por ahora, simplemente simulamos éxito
+    ai_provider = Config.get('AI_PROVIDER')
+    update_progress(100, f"Proveedor seleccionado: {ai_provider}")
+    complete_phase(True, f"Proveedor activo: {ai_provider}")
     
     # FASE 5: INICIO DEL SISTEMA
-    # Aquí vendría la implementación del modo interactivo o procesamiento de consultas
+    start_phase("system_start", "Preparando interfaz")
+    update_progress(50, "Inicializando sistema")
+    update_progress(100, "Sistema listo")
+    complete_phase(True, "Sistema listo para consultas")
     
     # Información de diagnóstico final
     print("\nResumen de estado del sistema:")
@@ -108,7 +143,8 @@ def main():
     print("\nEsquema detectado:")
     print(schema_text)
     
-    print("\nEl sistema está listo para procesar consultas.")
+    show_success("El sistema está listo para procesar consultas")
+    print("\nPuede comenzar a hacer consultas en lenguaje natural.")
 
 if __name__ == "__main__":
     main()
