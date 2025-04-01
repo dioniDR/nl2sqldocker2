@@ -1,3 +1,69 @@
+# Entornos virtuales
 venv/
+env/
+ENV/
+.venv/
+
+# Variables de entorno y configuración
 .env
+.env.*
+*.env
 claves
+secrets.yaml
+config.local.yaml
+
+# Archivos de caché de Python
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+.coverage
+htmlcov/
+.tox/
+
+# Directorios de distribución
+dist/
+build/
+*.egg-info/
+
+# Archivos de log
+*.log
+logs/
+status/logs/
+
+# Archivos temporales del sistema operativo
+.DS_Store
+Thumbs.db
+.directory
+*.tmp
+*.bak
+*.swp
+
+# Archivos de base de datos
+*.sqlite
+*.sqlite3
+*.db
+
+# Archivos IDE/editores
+.idea/
+.vscode/
+*.sublime-*
+.atom/
+.project
+.pydevproject
+*.swo
+*.swp
+*~
+
+# Archivos generados por herramientas
+.mypy_cache/
+.pyre/
+.ruff_cache/
+node_modules/
+
+# Archivos específicos del proyecto
+populate_tables.sql
+api.log
+web.log
+*.pid
+nohup.out
