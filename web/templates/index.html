@@ -346,3 +346,161 @@
     </script>
 </body>
 </html>
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NL2SQL - Visor de Datos</title>
+    <link rel="stylesheet" href="static/css/styles.css">
+</head>
+<body>
+    <header>
+        <h1>NL2SQL - Visor de Datos</h1>
+        <p>Consulta y filtra datos de la base de datos</p>
+    </header>
+    
+    <main>
+        <div id="controls">
+            <h2>Seleccione una tabla</h2>
+            <div class="table-buttons">
+                <button id="btn-clientes">Clientes</button>
+                <button id="btn-productos">Productos</button>
+                <button id="btn-ventas">Ventas</button>
+            </div>
+            
+            <div id="filter-clientes" class="filters">
+                <h3>Filtros para Clientes</h3>
+                <div class="filter-controls">
+                    <div class="filter-item">
+                        <label for="cliente-nombre">Nombre:</label>
+                        <input type="text" id="cliente-nombre">
+                    </div>
+                    
+                    <div class="filter-item">
+                        <label for="cliente-apellido">Apellido:</label>
+                        <input type="text" id="cliente-apellido">
+                    </div>
+                    
+                    <div class="filter-item">
+                        <label for="cliente-tipo">Tipo:</label>
+                        <select id="cliente-tipo">
+                            <option value="">Todos</option>
+                            <option value="Regular">Regular</option>
+                            <option value="VIP">VIP</option>
+                            <option value="Nuevo">Nuevo</option>
+                        </select>
+                    </div>
+                    
+                    <div class="filter-item">
+                        <label for="cliente-ciudad">Ciudad:</label>
+                        <input type="text" id="cliente-ciudad">
+                    </div>
+                    
+                    <div class="filter-actions">
+                        <button id="filter-clientes-btn">Filtrar</button>
+                        <button id="reset-clientes-btn">Limpiar</button>
+                    </div>
+                </div>
+            </div>
+            
+            <div id="filter-productos" class="filters">
+                <h3>Filtros para Productos</h3>
+                <div class="filter-controls">
+                    <div class="filter-item">
+                        <label for="producto-nombre">Nombre:</label>
+                        <input type="text" id="producto-nombre">
+                    </div>
+                    
+                    <div class="filter-item">
+                        <label for="producto-categoria">Categoría:</label>
+                        <input type="text" id="producto-categoria">
+                    </div>
+                    
+                    <div class="filter-item">
+                        <label for="producto-marca">Marca:</label>
+                        <input type="text" id="producto-marca">
+                    </div>
+                    
+                    <div class="filter-item">
+                        <label for="producto-precio-min">Precio Min:</label>
+                        <input type="number" id="producto-precio-min" min="0">
+                    </div>
+                    
+                    <div class="filter-item">
+                        <label for="producto-precio-max">Precio Max:</label>
+                        <input type="number" id="producto-precio-max" min="0">
+                    </div>
+                    
+                    <div class="filter-actions">
+                        <button id="filter-productos-btn">Filtrar</button>
+                        <button id="reset-productos-btn">Limpiar</button>
+                    </div>
+                </div>
+            </div>
+            
+            <div id="filter-ventas" class="filters">
+                <h3>Filtros para Ventas</h3>
+                <div class="filter-controls">
+                    <div class="filter-item">
+                        <label for="venta-cliente">ID Cliente:</label>
+                        <input type="number" id="venta-cliente" min="0">
+                    </div>
+                    
+                    <div class="filter-item">
+                        <label for="venta-producto">ID Producto:</label>
+                        <input type="number" id="venta-producto" min="0">
+                    </div>
+                    
+                    <div class="filter-item">
+                        <label for="venta-estado">Estado:</label>
+                        <select id="venta-estado">
+                            <option value="">Todos</option>
+                            <option value="Completada">Completada</option>
+                            <option value="Pendiente">Pendiente</option>
+                            <option value="Cancelada">Cancelada</option>
+                        </select>
+                    </div>
+                    
+                    <div class="filter-item">
+                        <label for="venta-fecha-inicio">Fecha Inicio:</label>
+                        <input type="date" id="venta-fecha-inicio">
+                    </div>
+                    
+                    <div class="filter-item">
+                        <label for="venta-fecha-fin">Fecha Fin:</label>
+                        <input type="date" id="venta-fecha-fin">
+                    </div>
+                    
+                    <div class="filter-actions">
+                        <button id="filter-ventas-btn">Filtrar</button>
+                        <button id="reset-ventas-btn">Limpiar</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div id="results">
+            <div id="loading">Cargando datos...</div>
+            <div id="error"></div>
+            
+            <div id="table-container">
+                <table id="results-table">
+                    <thead id="table-head">
+                        <tr>
+                            <th>Seleccione una tabla para ver datos</th>
+                        </tr>
+                    </thead>
+                    <tbody id="table-body"></tbody>
+                </table>
+            </div>
+        </div>
+    </main>
+    
+    <footer>
+        <p>NL2SQL - Sistema de Consultas SQL con Lenguaje Natural</p>
+    </footer>
+    
+    <script src="static/js/app.js"></script>
+</body>
+</html>
