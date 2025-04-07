@@ -29,6 +29,8 @@ import logging
 import uvicorn
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from dotenv import load_dotenv
+import os
 
 # Asegurar que el directorio raiz este en el path
 sys.path.insert(0, str(Path(__file__).parent.parent))
@@ -105,10 +107,13 @@ async def status():
             "message": str(e)
         }
 
+# Cargar variables de entorno desde .env
+load_dotenv()
+
 # Para ejecutar como script independiente
 if __name__ == "__main__":
-    # Obtener puerto de la configuracion o usar 8000 por defecto
-    port = Config.get('API_PORT', 8000)
+    # Obtener puerto de la configuración o usar 8001 por defecto
+    port = int(os.getenv('API_PORT', 8001))
     
     print(f"Iniciando servidor API en puerto {port}...")
     uvicorn.run("api.main:app", host="0.0.0.0", port=port, reload=True)

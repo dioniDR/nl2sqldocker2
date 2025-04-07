@@ -91,8 +91,8 @@ def main():
             web_proc = start_web()
             
             # Imprimir URLs de acceso
-            api_port = Config.get('API_PORT', 8000)
-            web_port = Config.get('WEB_PORT', 8080)
+            api_port = Config.get('API_PORT', 8001)  # Cambiar a 8001
+            web_port = Config.get('WEB_PORT', 8081)  # Cambiar a 8081  
             print("\n=== Servicios NL2SQL iniciados ===")
             print(f"API disponible en: http://localhost:{api_port}")
             print(f"Web disponible en: http://localhost:{web_port}")
