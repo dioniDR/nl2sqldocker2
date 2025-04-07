@@ -67,3 +67,6 @@ api.log
 web.log
 *.pid
 nohup.out
+
+# Editor joe
+joe/
